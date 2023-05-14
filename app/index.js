@@ -1,10 +1,9 @@
+'use client'
+
+import PublicTable from '../components/public/public-table';
 
 function PublicPage() {
-  return (
-    <dev>
-      <h1>Public Page</h1>
-    </dev>
-  )
+  return <PublicTable />
 }
 
 export default PublicPage;
