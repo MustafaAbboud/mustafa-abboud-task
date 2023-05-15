@@ -31,7 +31,6 @@ function SignupForm() {
                 // set some auth state
                 // router.replace('/profile');
                 console.log(result)
-                alert('Login Successful')
             }
         } else {
 

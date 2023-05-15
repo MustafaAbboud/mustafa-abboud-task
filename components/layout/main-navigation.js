@@ -1,46 +1,55 @@
+'use client'
+
 import Link from 'next/link';
-// import { useSession, signOut } from 'next-auth/client';
+import { useSession, signOut } from 'next-auth/react';
 
 import classes from './main-navigation.module.css';
+import { useEffect } from 'react';
 
 function MainNavigation() {
-  // const [session, loading] = useSession();
 
-  // function logoutHandler() {
-  //   signOut();
-  // }
+  const { data: session, status } = useSession()
+
+  const loading = status === "loading"
+
+  useEffect(() => {
+    console.log(session)
+  }, [session])
+
+  useEffect(() => {
+    console.log(loading)
+  }, [loading])
+
+
+  function logoutHandler() {
+    signOut();
+  }
 
   return (
     <header className={classes.header}>
       <nav>
         <ul>
-          <li>
-            <Link href='/'>Public</Link>
-          </li>
+          {session && session.user.admin && (
+            <li>
+              <Link href='/'>Public</Link>
+            </li>
+          )}
           <li>
             <Link href='/registration'>Register</Link>
           </li>
-          <li>
-            <Link href='/login'>Login</Link>
-          </li>
+          {!session && !loading && (
+            <li>
+              <Link href='/login'>Login</Link>
+            </li>
+          )}
           <li>
             <Link href='/admin'>Admin</Link>
           </li>
-          {/* {!session && !loading && (
-            <li>
-              <Link href='/auth'>Login</Link>
-            </li>
-          )}
-          {session && (
-            <li>
-              <Link href='/profile'>Profile</Link>
-            </li>
-          )}
           {session && (
             <li>
               <button onClick={logoutHandler}>Logout</button>
             </li>
-          )} */}
+          )}
         </ul>
       </nav>
     </header>

@@ -35,11 +35,28 @@ const handler = NextAuth({
                 }
 
                 client.close();
-                return { email: user.email };
 
+                const loggedUser = {
+                    email: user.email,
+                    admin: user.admin
+                }
+
+                return loggedUser;
             },
         }),
     ],
+    callbacks: {
+        async jwt({ user, token }) {
+            if (user) {
+                token.user = user;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.user = token.user;
+            return session;
+        },
+    },
 });
 
 export { handler as GET, handler as POST }
