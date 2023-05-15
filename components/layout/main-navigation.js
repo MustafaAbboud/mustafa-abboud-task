@@ -37,11 +37,6 @@ function MainNavigation() {
           <li>
             <Link href='/registration'>Register</Link>
           </li>
-          {!session && !loading && (
-            <li>
-              <Link href='/login'>Login</Link>
-            </li>
-          )}
           <li>
             <Link href='/admin'>Admin</Link>
           </li>
