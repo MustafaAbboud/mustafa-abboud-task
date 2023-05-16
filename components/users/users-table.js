@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 function UsersTable(props) {
 
     const { data: session, status } = useSession()
@@ -53,10 +66,10 @@ function UsersTable(props) {
         }
     }
 
-    async function delUser() {
+    async function delUser(id) {
 
         const body = {
-            id: 3
+            id: id
         }
 
         const response = await fetch('/api/users/', {
@@ -74,6 +87,8 @@ function UsersTable(props) {
         if (!response.ok) {
             throw new Error(data.message || 'Something went wrong!');
         }
+
+        qryUsers()
     }
 
     useEffect(() => {
@@ -85,38 +100,48 @@ function UsersTable(props) {
     }
 
     return (
-        <section>
-            <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Admin</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <Box>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell>User Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Admin</TableCell>
+                            {isAdmin && (
+                                <TableCell>Tools</TableCell>
+                            )}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
                         {users.map((user) => (
-                            <tr>
-                                <td>{user._id}</td>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.admin ? 'true' : 'false'}</td>
-                            </tr>
+                            <TableRow
+                                key={user._id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {user._id}
+                                </TableCell>
+                                <TableCell>{user.name}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.admin ? 'true' : 'false'}</TableCell>
+                                {isAdmin && (
+                                    <TableCell>
+                                        <IconButton onClick={() => editUser(user)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={() => delUser(user._id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                )}
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
-                {isAdmin && (
-                    <div>
-                        {/* <button onClick={() => addUser()}>Add User</button> */}
-                        <button onClick={() => editUser()}>Edit User</button>
-                        <button onClick={() => delUser()}>Delete User</button>
-                    </div>
-                )}
-            </div>
-        </section>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
     );
 }
 

@@ -81,43 +81,33 @@ function SignupForm() {
     }
 
     return (
-        // <Box
-        //     component="form"
-        //     sx={{
-        //         '& > :not(style)': { m: 1, width: '25ch' },
-        //     }}
-        //     noValidate
-        //     autoComplete="off"
-        // >
-        //     <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-        //     <TextField id="filled-basic" label="Filled" variant="filled" />
-        //     <TextField id="standard-basic" label="Standard" variant="standard" />
-        // </Box>
-        <form onSubmit={submitHandler} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', paddingTop: '40px' }}>
-                {!isLogin &&
-                    <Input id="standard-basic" placeholder="User Name" required inputRef={nameInputRef} />
-                }
+        <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <form onSubmit={submitHandler}>
+                <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', paddingTop: '40px' }}>
+                    {!isLogin &&
+                        <Input id="standard-basic" placeholder="User Name" required inputRef={nameInputRef} />
+                    }
 
-                <Input sx={{ marginTop: '20px' }} id="standard-basic" placeholder="Email" required inputRef={emailInputRef} />
+                    <Input sx={{ marginTop: '20px' }} id="standard-basic" placeholder="Email" required inputRef={emailInputRef} />
 
-                <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
+                    <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
 
-                {!isLogin &&
-                    <FormControlLabel sx={{ marginTop: '20px' }} control={<Checkbox defaultChecked on />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
-                }
+                    {!isLogin &&
+                        <FormControlLabel sx={{ marginTop: '20px' }} control={<Checkbox defaultChecked on />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
+                    }
 
-                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
-                    <Button sx={{ width: '100px' }} type='submit' variant="contained">{isLogin ? 'Login' : 'Sign Up'}</Button>
-                    <Button
-                        variant="text"
-                        onClick={() => setIsLogin(!isLogin)}
-                    >
-                        {isLogin ? 'Create new account' : 'Login with existing account'}
-                    </Button>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
+                        <Button sx={{ width: '100px' }} type='submit' variant="contained">{isLogin ? 'Login' : 'Sign Up'}</Button>
+                        <Button
+                            variant="text"
+                            onClick={() => setIsLogin(!isLogin)}
+                        >
+                            {isLogin ? 'Create new account' : 'Login with existing account'}
+                        </Button>
+                    </Box>
                 </Box>
-            </Box>
-        </form>
+            </form>
+        </Box>
     );
 }
 
