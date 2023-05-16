@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
@@ -28,11 +30,16 @@ function SignupForm() {
         const enteredPassword = passwordInputRef.current.value;
 
         if (isLogin) {
+
             const result = await signIn('credentials', {
                 redirect: false,
                 email: enteredEmail,
                 password: enteredPassword,
             });
+
+            if (!result.ok) {
+                toast.error(result.error);
+            }
 
             setIsLoading(false)
         } else {
@@ -70,14 +77,21 @@ function SignupForm() {
         const data = await response.json();
 
         if (!response.ok) {
+            toast.error('Something went wrong!');
             throw new Error(data.message || 'Something went wrong!');
         }
 
+        toast.success('Signup Successful');
         return data;
     }
 
     return (
         <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <ToastContainer
+                position="bottom-right"
+                hideProgressBar={true}
+                pauseOnHover={false}
+            />
             <form onSubmit={submitHandler}>
                 <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', paddingTop: '40px' }}>
                     {!isLogin &&

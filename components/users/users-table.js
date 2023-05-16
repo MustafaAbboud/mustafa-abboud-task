@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -42,10 +44,12 @@ function UsersTable(props) {
         const data = await response.json();
 
         if (!response.ok) {
+            toast.error('Something went wrong!');
             throw new Error(data.message || 'Something went wrong!');
         }
 
         setUsers(data.result)
+        setEditIsOpen(false)
         setIsLoading(false)
     }
 
@@ -65,9 +69,11 @@ function UsersTable(props) {
         });
 
         if (!response.ok) {
+            toast.error('Something went wrong!');
             throw new Error(data.message || 'Something went wrong!');
         }
 
+        toast.success('Record deleted successfully');
         qryUsers()
         setIsLoading(false)
     }
@@ -88,6 +94,11 @@ function UsersTable(props) {
 
     return (
         <Box>
+            <ToastContainer
+                position="bottom-right"
+                hideProgressBar={true}
+                pauseOnHover={false}
+            />
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>

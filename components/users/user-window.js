@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
@@ -45,15 +47,22 @@ function UserWindow(props) {
         });
 
         if (!response.ok) {
+            toast.error('Something went wrong!');
             throw new Error(data.message || 'Something went wrong!');
         }
 
+        toast.success('Record edited successfully');
         props.qryUsers()
         setIsLoading(false)
     }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+            <ToastContainer
+                position="bottom-right"
+                hideProgressBar={true}
+                pauseOnHover={false}
+            />
             <form onSubmit={editUser}>
                 <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', border: 1, borderRadius: '16px', borderColor: 'primary.main', boxShadow: 3, padding: '40px' }}>
 
