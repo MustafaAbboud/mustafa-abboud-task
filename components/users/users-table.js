@@ -13,7 +13,7 @@ function UsersTable(props) {
 
     async function qryUsers() {
 
-        const response = await fetch('/api/users', {
+        const response = await fetch('/api/users/', {
             method: 'GET',
         });
 

@@ -14,16 +14,16 @@ function AdminPage() {
 
     const router = useRouter();
 
+    if (loading) {
+        return <p>Loading ...</p>
+    }
+
     if (!session) {
         router.replace('/registration');
     }
 
     if (session && !session.user.admin) {
         router.replace('/');
-    }
-
-    if (loading) {
-        return <p>Loading ...</p>
     }
 
     return <UsersTable isAdmin={true} />

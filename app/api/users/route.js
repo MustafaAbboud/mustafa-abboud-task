@@ -21,6 +21,11 @@ export const GET = async () => {
     return new Response(JSON.stringify(responsResult), { status: 200 })
 }
 
+export const POST = async (request) => {
+
+    console.log(request.method)
+}
+
 export const PATCH = async (request) => {
 
     const { id, name, email, password, admin } = await request.json();
@@ -77,7 +82,6 @@ export const PATCH = async (request) => {
 
 export const DELETE = async (request) => {
 
-    console.log(request)
     const { id } = await request.json();
 
     const client = await connectToDatabase();
@@ -92,8 +96,6 @@ export const DELETE = async (request) => {
         client.close();
         return new Response("User not found!");
     }
-
-    const hashedPassword = await hashPassword(password);
 
     const result = await col.deleteOne({ _id: id },);
 
