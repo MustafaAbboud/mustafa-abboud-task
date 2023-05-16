@@ -25,16 +25,14 @@ async function handler(req, res) {
 
     if (req.method === 'PATCH') {
 
-        const { id, name, email, password, admin } = await req.body;
+        const { id, name, email, admin } = await req.body;
 
         if (
             !id ||
             !name ||
             !name.trim().length === 0 ||
             !email ||
-            !email.includes('@') ||
-            !password ||
-            password.trim().length < 4
+            !email.includes('@')
         ) {
             res.status(422).json({ message: 'Invalid input - password should also be at least 4 characters long.' });
         }
@@ -52,7 +50,7 @@ async function handler(req, res) {
             res.status(422).json({ message: 'User not found!' });
         }
 
-        const hashedPassword = await hashPassword(password);
+        const hashedPassword = await hashPassword(existingUser.password);
 
         const result = await col.updateOne(
             { _id: id },

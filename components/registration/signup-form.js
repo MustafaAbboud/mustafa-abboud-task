@@ -1,18 +1,19 @@
 import { useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 
-// import classes from './signup-form.module.css';
-
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 
+import Loader from '@/utils/loader';
+
 function SignupForm() {
 
     const [isLogin, setIsLogin] = useState(true);
-    const [isChecked, setIsChecked] = useState(false)
+    const [isChecked, setIsChecked] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     const nameInputRef = useRef();
     const emailInputRef = useRef();
@@ -21,10 +22,11 @@ function SignupForm() {
     async function submitHandler(event) {
         event.preventDefault();
 
+        setIsLoading(true)
+
         const enteredEmail = emailInputRef.current.value;
         const enteredPassword = passwordInputRef.current.value;
 
-        console.log(enteredEmail)
         if (isLogin) {
             const result = await signIn('credentials', {
                 redirect: false,
@@ -32,13 +34,7 @@ function SignupForm() {
                 password: enteredPassword,
             });
 
-            console.log(result)
-
-            if (!result.error) {
-                // set some auth state
-                // router.replace('/profile');
-                console.log(result)
-            }
+            setIsLoading(false)
         } else {
 
             const enteredName = nameInputRef.current.value;
@@ -56,12 +52,12 @@ function SignupForm() {
             } catch (error) {
                 console.log(error);
             }
+
+            setIsLoading(false)
         }
     }
 
     async function createUser(user) {
-
-        console.log(user)
 
         const response = await fetch('/api/registration', {
             method: 'POST',
@@ -93,7 +89,7 @@ function SignupForm() {
                     <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
 
                     {!isLogin &&
-                        <FormControlLabel sx={{ marginTop: '20px' }} control={<Checkbox defaultChecked on />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
+                        <FormControlLabel sx={{ marginTop: '20px' }} control={<Checkbox checked={isChecked} />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
                     }
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>
@@ -107,6 +103,8 @@ function SignupForm() {
                     </Box>
                 </Box>
             </form>
+
+            {isLoading && <Loader />}
         </Box>
     );
 }

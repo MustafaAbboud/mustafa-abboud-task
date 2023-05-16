@@ -1,3 +1,5 @@
+'use-client'
+
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -13,6 +15,9 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UserWindow from './user-window';
+
+import Loader from '@/utils/loader';
 
 function UsersTable(props) {
 
@@ -23,9 +28,13 @@ function UsersTable(props) {
     const isAdmin = props.isAdmin
 
     const [users, setUsers] = useState([{}])
+    const [editIsOpen, setEditIsOpen] = useState(false)
+    const [userToEdit, setUserToEdit] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     async function qryUsers() {
 
+        setIsLoading(true)
         const response = await fetch('/api/users', {
             method: 'GET',
         });
@@ -37,37 +46,12 @@ function UsersTable(props) {
         }
 
         setUsers(data.result)
-    }
-
-    async function editUser() {
-
-        const user = {
-            id: 3,
-            name: 'amiraPatch',
-            email: 'amira.maouch@softmachine.co',
-            password: '1234',
-            admin: false,
-        }
-
-        const response = await fetch('/api/users', {
-            method: 'PATCH',
-            body: JSON.stringify(user),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const data = await response.json();
-
-        console.log(data)
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Something went wrong!');
-        }
+        setIsLoading(false)
     }
 
     async function delUser(id) {
 
+        setIsLoading(true)
         const body = {
             id: id
         }
@@ -80,15 +64,18 @@ function UsersTable(props) {
             },
         });
 
-        const data = await response.json();
-
-        console.log(data)
-
         if (!response.ok) {
             throw new Error(data.message || 'Something went wrong!');
         }
 
         qryUsers()
+        setIsLoading(false)
+    }
+
+    function openEditWindow(user) {
+
+        setUserToEdit(user)
+        setEditIsOpen(true)
     }
 
     useEffect(() => {
@@ -128,7 +115,7 @@ function UsersTable(props) {
                                 <TableCell>{user.admin ? 'true' : 'false'}</TableCell>
                                 {isAdmin && (
                                     <TableCell>
-                                        <IconButton onClick={() => editUser(user)}>
+                                        <IconButton onClick={() => openEditWindow(user)}>
                                             <EditIcon />
                                         </IconButton>
                                         <IconButton onClick={() => delUser(user._id)}>
@@ -141,6 +128,15 @@ function UsersTable(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {editIsOpen && (
+                <UserWindow
+                    user={userToEdit}
+                    qryUsers={qryUsers}
+                />
+            )}
+
+            {isLoading && <Loader />}
         </Box>
     );
 }

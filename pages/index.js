@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -12,6 +13,15 @@ function PublicPage() {
   const loading = status === "loading"
 
   const router = useRouter();
+
+  useEffect(() => {
+
+    if (!session)
+      router.replace('/registration');
+
+    if (session && session.user.admin)
+      router.replace('/admin');
+  }, [session])
 
   if (loading) {
     return <p>Loading ...</p>
