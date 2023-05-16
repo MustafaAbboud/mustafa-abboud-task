@@ -1,4 +1,3 @@
-import { hashPassword } from '../../../utils/auth';
 import { connectToDatabase } from '../../../utils/db';
 
 async function handler(req, res) {
@@ -50,8 +49,6 @@ async function handler(req, res) {
             res.status(422).json({ message: 'User not found!' });
         }
 
-        const hashedPassword = await hashPassword(existingUser.password);
-
         const result = await col.updateOne(
             { _id: id },
             {
@@ -59,7 +56,7 @@ async function handler(req, res) {
                     _id: id,
                     name: name,
                     email: email,
-                    password: hashedPassword,
+                    password: existingUser.password,
                     admin: admin
                 }
             }
