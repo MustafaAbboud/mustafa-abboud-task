@@ -13,7 +13,7 @@ function UsersTable(props) {
 
     async function qryUsers() {
 
-        const response = await fetch('/api/users/', {
+        const response = await fetch('/api/users', {
             method: 'GET',
         });
 
@@ -23,15 +23,15 @@ function UsersTable(props) {
             throw new Error(data.message || 'Something went wrong!');
         }
 
-        setUsers(data)
+        setUsers(data.result)
     }
 
     async function editUser() {
 
         const user = {
-            id: 1,
-            name: 'testPatch2',
-            email: 'test1@task.com',
+            id: 3,
+            name: 'amiraPatch',
+            email: 'amira.maouch@softmachine.co',
             password: '1234',
             admin: false,
         }
@@ -55,11 +55,13 @@ function UsersTable(props) {
 
     async function delUser() {
 
-        const user = { id: 1 }
+        const body = {
+            id: 3
+        }
 
         const response = await fetch('/api/users/', {
             method: 'DELETE',
-            body: JSON.stringify(user),
+            body: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json',
             },

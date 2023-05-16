@@ -1,10 +1,11 @@
 'use client'
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 
 import classes from './main-navigation.module.css';
-import { useEffect } from 'react';
 
 function MainNavigation() {
 
@@ -29,17 +30,17 @@ function MainNavigation() {
     <header className={classes.header}>
       <nav>
         <ul>
-          {session && session.user.admin && (
-            <li>
-              <Link href='/'>Public</Link>
-            </li>
-          )}
+          <li>
+            <Link href='/'>Public</Link>
+          </li>
           <li>
             <Link href='/registration'>Register</Link>
           </li>
-          <li>
-            <Link href='/admin'>Admin</Link>
-          </li>
+          {session && session.user.admin && (
+            <li>
+              <Link href='/admin'>Admin</Link>
+            </li>
+          )}
           {session && (
             <li>
               <button onClick={logoutHandler}>Logout</button>

@@ -1,10 +1,10 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { verifyPassword } from '../../../../utils/auth';
-import { connectToDatabase } from '../../../../utils/db';
+import { verifyPassword } from '../../../utils/auth';
+import { connectToDatabase } from '../../../utils/db';
 
-const handler = NextAuth({
+export default NextAuth({
     session: {
         jwt: true,
     },
@@ -58,5 +58,3 @@ const handler = NextAuth({
         },
     },
 });
-
-export { handler as GET, handler as POST }
