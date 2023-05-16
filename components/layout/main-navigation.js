@@ -1,11 +1,16 @@
 'use client'
 
 import { useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 
-import classes from './main-navigation.module.css';
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 
 function MainNavigation() {
 
@@ -27,28 +32,48 @@ function MainNavigation() {
   }
 
   return (
-    <header className={classes.header}>
-      <nav>
-        <ul>
-          <li>
-            <Link href='/'>Public</Link>
-          </li>
-          <li>
-            <Link href='/registration'>Register</Link>
-          </li>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Link sx={{ color: '#ffffff' }} href='/'>Public</Link>
+          </Typography>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} href='/registration'>
+            <Link sx={{ color: '#ffffff' }} href='/registration'>Register</Link>
+          </Typography>
           {session && session.user.admin && (
-            <li>
-              <Link href='/admin'>Admin</Link>
-            </li>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} href='/admin'>
+              <Link sx={{ color: '#ffffff' }} href='admin'>Admin</Link>
+            </Typography>
           )}
           {session && (
-            <li>
-              <button onClick={logoutHandler}>Logout</button>
-            </li>
+            <Button color="inherit" onClick={logoutHandler}>Logout</Button>
           )}
-        </ul>
-      </nav>
-    </header>
+        </Toolbar>
+      </AppBar>
+    </Box>
+    // <header className={classes.header}>
+    //   <nav>
+    //     <ul>
+    //       <li>
+    //         <Link href='/'>Public</Link>
+    //       </li>
+    //       <li>
+    //         <Link href='/registration'>Register</Link>
+    //       </li>
+    //       {session && session.user.admin && (
+    //         <li>
+    //           <Link href='/admin'>Admin</Link>
+    //         </li>
+    //       )}
+    //       {session && (
+    //         <li>
+    //           <button onClick={logoutHandler}>Logout</button>
+    //         </li>
+    //       )}
+    //     </ul>
+    //   </nav>
+    // </header>
   );
 }
 

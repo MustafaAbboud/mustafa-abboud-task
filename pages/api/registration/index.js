@@ -1,9 +1,13 @@
 import { hashPassword } from '../../../utils/auth';
 import { connectToDatabase } from '../../../utils/db';
 
-export const POST = async (request) => {
+async function handler(req, res) {
 
-    const { name, email, password, admin } = await request.json();
+    if (req.method !== 'POST') {
+        return;
+    }
+
+    const { name, email, password, admin } = await req.body;
 
     if (
         !name ||
@@ -33,9 +37,6 @@ export const POST = async (request) => {
 
     const lastRecord = await col.findOne({}, { sort: { _id: -1 } });
 
-    console.log('_id')
-    console.log(lastRecord._id)
-
     const responsresult = await col.insertOne({
         _id: lastRecord._id + 1,
         name: name,
@@ -55,3 +56,5 @@ export const POST = async (request) => {
         }
     })
 }
+
+export default handler;
