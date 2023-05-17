@@ -4,22 +4,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import Loader from '@/utils/loader';
 
 function UserWindow(props) {
 
+    const newMode = props.newMode
     const user = props.user
-    const { _id, name, email, admin } = user
 
-    const [isChecked, setIsChecked] = useState(admin)
+    const { _id, name, email, role } = user
+
+    const [selectedRole, setSelectedRole] = useState(role ? role : 'subscriber')
     const [isLoading, setIsLoading] = useState(false)
 
     const nameInputRef = useRef();
     const emailInputRef = useRef();
+    const passwordInputRef = useRef();
 
     async function editUser(event) {
 
@@ -29,13 +35,28 @@ function UserWindow(props) {
 
         const enteredName = nameInputRef.current.value;
         const enteredEmail = emailInputRef.current.value;
-        const admin = isChecked;
 
-        const user = {
-            _id: _id,
-            name: enteredName,
-            email: enteredEmail,
-            admin: admin,
+        var user
+
+        if (newMode) {
+
+            const enteredPassword = passwordInputRef.current.value;
+
+            user = {
+                _id: _id,
+                name: enteredName,
+                email: enteredEmail,
+                password: enteredPassword,
+                role: selectedRole,
+            }
+        } else {
+
+            user = {
+                _id: _id,
+                name: enteredName,
+                email: enteredEmail,
+                role: selectedRole,
+            }
         }
 
         const response = await fetch('/api/users', {
@@ -46,41 +67,70 @@ function UserWindow(props) {
             },
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
 
-            toast.error('Something went wrong!');
-            throw new Error('Something went wrong!');
+            setIsLoading(false)
+            toast.error(data.message || 'Something went wrong!');
+            return
         }
 
-        toast.success('Record edited successfully');
+        if (newMode)
+            toast.success('New user add successfully');
+        else
+            toast.success('Record edited successfully');
+
         props.qryUsers()
         setIsLoading(false)
     }
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+        <Box sx={{ position: 'absolute', top: 72, width: 'calc(100vw - 25px)', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'hsla(0, 0%, 100%, 0.4)' }}>
             <ToastContainer
                 position="bottom-right"
                 hideProgressBar={true}
                 pauseOnHover={false}
             />
-            <form onSubmit={editUser}>
-                <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', border: 1, borderRadius: '16px', borderColor: 'primary.main', boxShadow: 3, padding: '40px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+                <form onSubmit={editUser}>
+                    <Box sx={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', border: 1, borderRadius: '16px', borderColor: 'primary.main', boxShadow: 3, padding: '40px', backgroundColor: 'hsl(0, 0%, 100%)' }}>
+                        <Box sx={{ height: 10, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                            <IconButton sx={{ marginRight: -4 }} onClick={() => props.setUserWindowOpen(false)}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
 
-                    <Input sx={{ width: '300px' }} id="standard-basic" placeholder="User Name" required defaultValue={name} inputRef={nameInputRef} />
+                        <Input sx={{ width: '300px' }} id="standard-basic" placeholder="User Name" required defaultValue={name} inputRef={nameInputRef} />
 
-                    <Input sx={{ width: '300px', marginTop: '20px' }} id="standard-basic" placeholder="Email" required defaultValue={email} inputRef={emailInputRef} />
+                        <Input sx={{ width: '300px', marginTop: '20px' }} id="standard-basic" placeholder="Email" required defaultValue={email} inputRef={emailInputRef} />
 
-                    <FormControlLabel sx={{ width: '300px', marginTop: '20px' }} control={<Checkbox checked={isChecked} />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
+                        {newMode && (
+                            <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
+                        )}
 
-                    <Box sx={{ marginBottom: '-40px', marginTop: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-                        <Button sx={{ width: '140px' }} type='submit' variant="contained">Edit User</Button>
+                        <Select
+                            sx={{ marginTop: '20px' }}
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={selectedRole}
+                            label="Role"
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                        >
+                            <MenuItem value={'admin'}>Admin</MenuItem>
+                            <MenuItem value={'subscriber'}>Subscriber</MenuItem>
+                        </Select>
+
+                        <Box sx={{ marginBottom: '-40px', marginTop: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
+                            <Button sx={{ width: '140px' }} type='submit' variant="contained">{newMode ? 'Add User' : 'Edit User'}</Button>
+                        </Box>
+
                     </Box>
+                </form>
 
-                </Box>
-            </form>
-
+            </Box>
             {isLoading && <Loader />}
+
         </Box>
     )
 }

@@ -1,10 +1,19 @@
 import { connectToDB, disconnectFromDB } from '../../../utils/db';
 import { hashPassword } from '../../../utils/auth';
 import User from '@/models/UsersModel';
+import { getToken } from "next-auth/jwt";
+
+const secret = process.env.NEXTAUTH_SECRET
 
 async function handler(req, res) {
 
     if (req.method === 'GET') {
+
+        const token = await getToken({ req, secret })
+
+        if (!token) {
+            return res.status(498).json({ message: 'Invalid Token!' })
+        }
 
         try {
 
@@ -24,34 +33,38 @@ async function handler(req, res) {
 
     if (req.method === 'POST') {
 
-        const { _id, name, email, password, admin } = await req.body;
+        const { _id, name, email, password, role } = await req.body;
 
         await connectToDB();
 
         if (_id) {
             //EDIT MODE
             try {
+                const token = await getToken({ req, secret })
 
+                if (!token) {
+                    return res.status(498).json({ message: 'Invalid Token!' })
+                }
 
-                await User.findByIdAndUpdate(_id, {
+                if (token.user.role != 'admin')
+                    return res.status(405).json({ message: 'Not Authorized!' })
+
+                const updatedUser = await User.findByIdAndUpdate(_id, {
                     name: name,
                     email: email,
-                    admin: admin
+                    role: role
                 })
 
-                // if (!existingUser) {
-                //     client.close();
-                //     res.status(422).json({ message: 'User not found!' });
-                //     return
-                // }
-
-                // await user.save()
+                if (!updatedUser) {
+                    res.status(422).json({ message: 'User not found!' });
+                    throw new Error('User not found!');
+                }
 
                 res.status(200).json({
                     _id: _id,
                     name: name,
                     email: email,
-                    admin: admin
+                    role: role
                 })
 
                 disconnectFromDB()
@@ -59,6 +72,7 @@ async function handler(req, res) {
 
                 disconnectFromDB()
                 res.status(400).json({ error: error })
+                throw new Error(error);
             }
         } else {
             //NEW MODE  
@@ -66,21 +80,27 @@ async function handler(req, res) {
 
                 const lastRecord = await User.findOne().sort({ field: 'asc', _id: -1 })
 
+                let newUserId
+                if (lastRecord)
+                    newUserId = lastRecord._id + 1
+                else
+                    newUserId = 1
+
                 var user = new User({
-                    _id: lastRecord._id + 1,
+                    _id: newUserId,
                     name: name,
                     email: email,
                     password: await hashPassword(password),
-                    admin: admin
+                    role: role
                 })
 
                 await user.save()
 
                 res.status(200).json({
-                    _id: lastRecord._id + 1,
+                    _id: newUserId,
                     name: name,
                     email: email,
-                    admin: admin
+                    role: role
                 })
 
                 disconnectFromDB()
@@ -88,20 +108,40 @@ async function handler(req, res) {
 
                 disconnectFromDB()
                 res.status(400).json({ error: error })
+                throw new Error(error);
             }
         }
     }
 
     if (req.method === 'DELETE') {
 
+        const token = await getToken({ req, secret })
+
+        if (!token) {
+            return res.status(498).json({ message: 'Invalid Token!' })
+        }
+
+        const role = token.user.role
+
+        if (role != 'admin')
+            return res.status(405).json({ message: 'Not Authorized!' })
+
         const { id } = await req.body;
 
         connectToDB();
 
-        await User.deleteOne({ _id: id });
+        try {
 
-        res.status(200).json({ message: 'DELETE SUCCESSFUL!' });
-        disconnectFromDB()
+            await User.deleteOne({ _id: id });
+
+            res.status(200).json({ message: 'DELETE SUCCESSFUL!' });
+            disconnectFromDB()
+        } catch (error) {
+
+            disconnectFromDB()
+            res.status(400).json({ error: error })
+            throw new Error(error);
+        }
     }
 }
 

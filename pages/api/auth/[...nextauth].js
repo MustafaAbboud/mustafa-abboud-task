@@ -7,7 +7,8 @@ import User from '@/models/UsersModel';
 
 export default NextAuth({
     session: {
-        jwt: true,
+        strategy: 'jwt',
+        maxAge: 30 * 24 * 60 * 60
     },
     providers: [
         CredentialsProvider({
@@ -36,7 +37,7 @@ export default NextAuth({
 
                 const loggedUser = {
                     email: user.email,
-                    admin: user.admin
+                    role: user.role
                 }
 
                 return loggedUser;

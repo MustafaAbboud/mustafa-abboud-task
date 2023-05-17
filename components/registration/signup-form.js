@@ -5,16 +5,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 import Loader from '@/utils/loader';
 
 function SignupForm() {
 
     const [isLogin, setIsLogin] = useState(true);
-    const [isChecked, setIsChecked] = useState(true)
+    const [role, setRole] = useState('admin')
     const [isLoading, setIsLoading] = useState(false)
 
     const nameInputRef = useRef();
@@ -37,6 +37,9 @@ function SignupForm() {
                 password: enteredPassword,
             });
 
+            // const data = await result.json();
+
+            console.log(result)
             if (!result.ok) {
                 toast.error('Something went wrong!');
             }
@@ -45,13 +48,13 @@ function SignupForm() {
         } else {
 
             const enteredName = nameInputRef.current.value;
-            const admin = isChecked;
-
+            // const admin = isChecked;
+            console.log(role)
             const user = {
                 name: enteredName,
                 email: enteredEmail,
                 password: enteredPassword,
-                admin: admin,
+                role: role,
             }
 
             try {
@@ -86,7 +89,7 @@ function SignupForm() {
     }
 
     return (
-        <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 70 }}>
             <ToastContainer
                 position="bottom-right"
                 hideProgressBar={true}
@@ -103,7 +106,17 @@ function SignupForm() {
                     <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
 
                     {!isLogin &&
-                        <FormControlLabel sx={{ marginTop: '20px' }} control={<Checkbox checked={isChecked} />} label="Admin" onChange={() => setIsChecked(!isChecked)} />
+                        <Select
+                            sx={{ marginTop: '20px' }}
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={role}
+                            label="Role"
+                            onChange={(e) => setRole(e.target.value)}
+                        >
+                            <MenuItem value={'admin'}>Admin</MenuItem>
+                            <MenuItem value={'subscriber'}>Subscriber</MenuItem>
+                        </Select>
                     }
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>

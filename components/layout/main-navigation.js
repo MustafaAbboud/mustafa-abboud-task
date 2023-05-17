@@ -1,14 +1,15 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
+import MenuItem from '@mui/material/MenuItem';
 
 function MainNavigation() {
 
@@ -16,8 +17,14 @@ function MainNavigation() {
 
   const loading = status === "loading"
 
+  const router = useRouter();
+
+  const [isAdmin, setIsAdmin] = useState(false)
+
   useEffect(() => {
     console.log(session)
+    if (session)
+      setIsAdmin(session.user.role === 'admin' ? true : false)
   }, [session])
 
   useEffect(() => {
@@ -27,33 +34,34 @@ function MainNavigation() {
 
   function logoutHandler() {
     signOut();
+    router.replace('/registration')
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          {session && !session.user.admin && (
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <Link sx={{ color: '#ffffff' }} href='/'>Public</Link>
-            </Typography>
+    <AppBar position="absolute">
+      <Toolbar>
+        <Box sx={{ flexGrow: 1, display: 'flex' }}>
+          {session && (
+            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
+              <MenuItem>Public</MenuItem>
+            </Link>
           )}
           {!session && (
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} href='/registration'>
-              <Link sx={{ color: '#ffffff' }} href='/registration'>Log In</Link>
-            </Typography>
+            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/registration'>
+              <MenuItem>Log In</MenuItem>
+            </Link>
           )}
-          {session && session.user.admin && (
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} href='/admin'>
-              <Link sx={{ color: '#ffffff' }} href='admin'>Admin</Link>
-            </Typography>
+          {session && isAdmin && (
+            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
+              <MenuItem>Admin</MenuItem>
+            </Link>
           )}
-          {session && (
-            <Button color="inherit" onClick={logoutHandler}>Logout</Button>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
+        </Box>
+        {session && (
+          <Button color="inherit" onClick={logoutHandler}>Logout</Button>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 }
 

@@ -16,11 +16,12 @@ function RegistrationPage() {
 
     useEffect(() => {
 
-        if (session && session.user.admin)
-            router.replace('/admin');
-
-        if (session && !session.user.admin)
-            router.replace('/');
+        if (session) {
+            if (session.user.role === 'admin')
+                router.replace('/admin');
+            else
+                router.replace('/');
+        }
     }, [session])
 
     if (loading) {
