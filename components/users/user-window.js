@@ -32,14 +32,14 @@ function UserWindow(props) {
         const admin = isChecked;
 
         const user = {
-            id: _id,
+            _id: _id,
             name: enteredName,
             email: enteredEmail,
             admin: admin,
         }
 
         const response = await fetch('/api/users', {
-            method: 'PATCH',
+            method: 'POST',
             body: JSON.stringify(user),
             headers: {
                 'Content-Type': 'application/json',
@@ -47,8 +47,9 @@ function UserWindow(props) {
         });
 
         if (!response.ok) {
+
             toast.error('Something went wrong!');
-            throw new Error(data.message || 'Something went wrong!');
+            throw new Error('Something went wrong!');
         }
 
         toast.success('Record edited successfully');

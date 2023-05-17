@@ -38,7 +38,7 @@ function SignupForm() {
             });
 
             if (!result.ok) {
-                toast.error(result.error);
+                toast.error('Something went wrong!');
             }
 
             setIsLoading(false)
@@ -57,7 +57,7 @@ function SignupForm() {
             try {
                 const result = await createUser(user);
             } catch (error) {
-                console.log(error);
+                toast.error('Something went wrong!');
             }
 
             setIsLoading(false)
@@ -66,7 +66,7 @@ function SignupForm() {
 
     async function createUser(user) {
 
-        const response = await fetch('/api/registration', {
+        const response = await fetch('/api/users', {
             method: 'POST',
             body: JSON.stringify(user),
             headers: {

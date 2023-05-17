@@ -1,101 +1,107 @@
-import { connectToDatabase } from '../../../utils/db';
+import { connectToDB, disconnectFromDB } from '../../../utils/db';
+import { hashPassword } from '../../../utils/auth';
+import User from '@/models/UsersModel';
 
 async function handler(req, res) {
 
     if (req.method === 'GET') {
 
-        const client = await connectToDatabase();
-        const db = client.db();
+        try {
 
-        const col = await db.collection('users')
+            await connectToDB();
 
-        const responsResult = await col.find({}, '-password').toArray(function (err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-                res.send(JSON.stringify(result));
-            }
-        });
+            const responsResult = await User.find({})
 
-        client.close();
+            res.status(200).json({ result: responsResult });
 
-        res.status(200).json({ result: responsResult });
+            disconnectFromDB()
+        } catch (error) {
+
+            disconnectFromDB()
+            res.status(400).json({ message: error })
+        }
     }
 
-    if (req.method === 'PATCH') {
+    if (req.method === 'POST') {
 
-        const { id, name, email, admin } = await req.body;
+        const { _id, name, email, password, admin } = await req.body;
 
-        if (
-            !id ||
-            !name ||
-            !name.trim().length === 0 ||
-            !email ||
-            !email.includes('@')
-        ) {
-            res.status(422).json({ message: 'Invalid input - password should also be at least 4 characters long.' });
-        }
+        await connectToDB();
 
-        const client = await connectToDatabase();
+        if (_id) {
+            //EDIT MODE
+            try {
 
-        const db = client.db();
 
-        const col = db.collection('users')
-
-        const existingUser = await col.findOne({ _id: id });
-
-        if (!existingUser) {
-            client.close();
-            res.status(422).json({ message: 'User not found!' });
-        }
-
-        const result = await col.updateOne(
-            { _id: id },
-            {
-                $set: {
-                    _id: id,
+                await User.findByIdAndUpdate(_id, {
                     name: name,
                     email: email,
-                    password: existingUser.password,
                     admin: admin
-                }
-            }
-        );
+                })
 
-        client.close();
+                // if (!existingUser) {
+                //     client.close();
+                //     res.status(422).json({ message: 'User not found!' });
+                //     return
+                // }
 
-        res.status(200).json({
-            result: {
-                _id: id,
-                name: name,
-                email: email,
-                admin: admin
+                // await user.save()
+
+                res.status(200).json({
+                    _id: _id,
+                    name: name,
+                    email: email,
+                    admin: admin
+                })
+
+                disconnectFromDB()
+            } catch (error) {
+
+                disconnectFromDB()
+                res.status(400).json({ error: error })
             }
-        })
+        } else {
+            //NEW MODE  
+            try {
+
+                const lastRecord = await User.findOne().sort({ field: 'asc', _id: -1 })
+
+                var user = new User({
+                    _id: lastRecord._id + 1,
+                    name: name,
+                    email: email,
+                    password: await hashPassword(password),
+                    admin: admin
+                })
+
+                await user.save()
+
+                res.status(200).json({
+                    _id: lastRecord._id + 1,
+                    name: name,
+                    email: email,
+                    admin: admin
+                })
+
+                disconnectFromDB()
+            } catch (error) {
+
+                disconnectFromDB()
+                res.status(400).json({ error: error })
+            }
+        }
     }
 
     if (req.method === 'DELETE') {
 
         const { id } = await req.body;
 
-        const client = await connectToDatabase();
+        connectToDB();
 
-        const db = client.db();
-
-        const col = db.collection('users')
-
-        const existingUser = await col.findOne({ _id: id });
-
-        if (!existingUser) {
-            client.close();
-            res.status(422).json({ message: 'User not found!' });
-        }
-
-        const result = await col.deleteOne({ _id: id },);
-
-        client.close();
+        await User.deleteOne({ _id: id });
 
         res.status(200).json({ message: 'DELETE SUCCESSFUL!' });
+        disconnectFromDB()
     }
 }
 
