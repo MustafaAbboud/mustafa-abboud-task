@@ -64,6 +64,7 @@ function UserWindow(props) {
             body: JSON.stringify(user),
             headers: {
                 'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + props.accessToken
             },
         });
 

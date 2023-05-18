@@ -1,7 +1,6 @@
 'use-client'
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,29 +23,29 @@ import Loader from '@/utils/loader';
 
 function UsersTable(props) {
 
-    const { data: session, status } = useSession()
-
-    const loading = status === "loading"
-
-    const isAdmin = props.isAdmin
-
     const [users, setUsers] = useState([{}])
     const [userWindowOpen, setUserWindowOpen] = useState(false)
     const [userToEdit, setUserToEdit] = useState(false)
     const [newMode, setNewMode] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
+    const isAdmin = props.isAdmin
+    const accessToken = props.accessToken
+
     async function qryUsers() {
 
         setIsLoading(true)
         const response = await fetch('/api/users', {
             method: 'GET',
+            headers: {
+                'authorization': 'Bearer ' + accessToken
+            }
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-            toast.error(data.message || 'Something went wrong!');
+        if (data.error) {
+            toast.error(data.error);
         } else {
             setUsers(data.result)
         }
@@ -67,6 +66,7 @@ function UsersTable(props) {
             body: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + accessToken
             },
         });
 
@@ -92,12 +92,9 @@ function UsersTable(props) {
     }
 
     useEffect(() => {
+
         qryUsers()
     }, [])
-
-    if (loading) {
-        return <p>Loading ...</p>
-    }
 
     return (
         <>
@@ -159,6 +156,7 @@ function UsersTable(props) {
                     user={userToEdit}
                     qryUsers={qryUsers}
                     setUserWindowOpen={setUserWindowOpen}
+                    accessToken={accessToken}
                 />
             )}
 

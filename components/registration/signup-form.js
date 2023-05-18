@@ -37,9 +37,6 @@ function SignupForm() {
                 password: enteredPassword,
             });
 
-            // const data = await result.json();
-
-            console.log(result)
             if (!result.ok) {
                 toast.error('Something went wrong!');
             }
@@ -48,8 +45,7 @@ function SignupForm() {
         } else {
 
             const enteredName = nameInputRef.current.value;
-            // const admin = isChecked;
-            console.log(role)
+
             const user = {
                 name: enteredName,
                 email: enteredEmail,

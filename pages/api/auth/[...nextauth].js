@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
+import jwt from 'jsonwebtoken';
 
 import { verifyPassword } from '../../../utils/auth';
 import { connectToDB, disconnectFromDB } from '../../../utils/db';
@@ -33,11 +34,16 @@ export default NextAuth({
                     throw new Error('Could not log you in!');
                 }
 
+                const accessToken = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET_KEY, {
+                    expiresIn: '30d'
+                });
+
                 disconnectFromDB()
 
                 const loggedUser = {
                     email: user.email,
-                    role: user.role
+                    role: user.role,
+                    accessToken: accessToken
                 }
 
                 return loggedUser;

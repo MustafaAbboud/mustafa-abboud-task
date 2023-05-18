@@ -2,6 +2,8 @@ import { connectToDB, disconnectFromDB } from '../../../utils/db';
 import { hashPassword } from '../../../utils/auth';
 import User from '@/models/UsersModel';
 import { getToken } from "next-auth/jwt";
+import jwt from 'jsonwebtoken';
+import authUserMiddleware from '@/middlewares/users.middleware';
 
 const secret = process.env.NEXTAUTH_SECRET
 
@@ -9,11 +11,10 @@ async function handler(req, res) {
 
     if (req.method === 'GET') {
 
-        const token = await getToken({ req, secret })
+        const isValid = await authUserMiddleware(req, false)
 
-        if (!token) {
-            return res.status(498).json({ message: 'Invalid Token!' })
-        }
+        if (!isValid)
+            return res.status(401).json({ error: 'Invalid Token!' })
 
         try {
 
@@ -27,7 +28,7 @@ async function handler(req, res) {
         } catch (error) {
 
             disconnectFromDB()
-            res.status(400).json({ message: error })
+            res.status(400).json({ error: 'Something went wrong!' })
         }
     }
 
@@ -40,14 +41,10 @@ async function handler(req, res) {
         if (_id) {
             //EDIT MODE
             try {
-                const token = await getToken({ req, secret })
+                const isValid = await authUserMiddleware(req, true)
 
-                if (!token) {
-                    return res.status(498).json({ message: 'Invalid Token!' })
-                }
-
-                if (token.user.role != 'admin')
-                    return res.status(405).json({ message: 'Not Authorized!' })
+                if (!isValid)
+                    return res.status(401).json({ error: 'Invalid Token!' })
 
                 const updatedUser = await User.findByIdAndUpdate(_id, {
                     name: name,
@@ -71,8 +68,7 @@ async function handler(req, res) {
             } catch (error) {
 
                 disconnectFromDB()
-                res.status(400).json({ error: error })
-                throw new Error(error);
+                res.status(400).json({ error: 'Something went wrong!' })
             }
         } else {
             //NEW MODE  
@@ -107,24 +103,17 @@ async function handler(req, res) {
             } catch (error) {
 
                 disconnectFromDB()
-                res.status(400).json({ error: error })
-                throw new Error(error);
+                res.status(400).json({ error: 'Something went wrong!' })
             }
         }
     }
 
     if (req.method === 'DELETE') {
 
-        const token = await getToken({ req, secret })
+        const isValid = await authUserMiddleware(req, true)
 
-        if (!token) {
-            return res.status(498).json({ message: 'Invalid Token!' })
-        }
-
-        const role = token.user.role
-
-        if (role != 'admin')
-            return res.status(405).json({ message: 'Not Authorized!' })
+        if (!isValid)
+            return res.status(401).json({ error: 'Invalid Token!' })
 
         const { id } = await req.body;
 
@@ -139,8 +128,7 @@ async function handler(req, res) {
         } catch (error) {
 
             disconnectFromDB()
-            res.status(400).json({ error: error })
-            throw new Error(error);
+            res.status(400).json({ error: 'Something went wrong!' })
         }
     }
 }

@@ -5,7 +5,6 @@ export default withAuth(
 
     function middleware(req) {
 
-        console.log('middle')
         if (!req.nextauth.token)
             return NextResponse.redirect(new URL('/registration', req.nextUrl.origin));
 
