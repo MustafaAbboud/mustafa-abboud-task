@@ -14,7 +14,7 @@ import Loader from '@/utils/loader';
 function SignupForm() {
 
     const [isLogin, setIsLogin] = useState(true);
-    const [role, setRole] = useState('admin')
+    const [role, setRole] = useState('subscriber')
     const [isLoading, setIsLoading] = useState(false)
 
     const nameInputRef = useRef();
@@ -109,12 +109,17 @@ function SignupForm() {
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             value={role}
-                            label="Role"
                             onChange={(e) => setRole(e.target.value)}
                         >
                             <MenuItem value={'admin'}>Admin</MenuItem>
                             <MenuItem value={'subscriber'}>Subscriber</MenuItem>
                         </Select>
+                    }
+
+                    {isLogin &&
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button variant="text">Forgot your password ?</Button>
+                        </Box>
                     }
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '50px' }}>

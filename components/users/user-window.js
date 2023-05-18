@@ -115,7 +115,6 @@ function UserWindow(props) {
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             value={selectedRole}
-                            label="Role"
                             onChange={(e) => setSelectedRole(e.target.value)}
                         >
                             <MenuItem value={'admin'}>Admin</MenuItem>
