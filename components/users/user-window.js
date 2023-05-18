@@ -129,8 +129,8 @@ function UserWindow(props) {
                 </form>
 
             </Box>
-            {isLoading && <Loader />}
 
+            {isLoading && <Loader />}
         </Box>
     )
 }

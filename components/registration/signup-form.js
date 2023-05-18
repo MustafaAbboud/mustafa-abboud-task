@@ -10,10 +10,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 import Loader from '@/utils/loader';
+import ErrorBox from '../error';
 
 function SignupForm() {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [errorMsg, setErrorMsg] = useState('');
     const [role, setRole] = useState('subscriber')
     const [isLoading, setIsLoading] = useState(false)
 
@@ -38,7 +40,8 @@ function SignupForm() {
             });
 
             if (!result.ok) {
-                toast.error('Something went wrong!');
+                setErrorMsg('Wrong username or password!')
+                // toast.error('Something went wrong!');
             }
 
             setIsLoading(false)
@@ -134,6 +137,12 @@ function SignupForm() {
                 </Box>
             </form>
 
+            {errorMsg &&
+                <ErrorBox
+                    errorMsg={errorMsg}
+                    setErrorMsg={setErrorMsg}
+                />
+            }
             {isLoading && <Loader />}
         </Box>
     );
