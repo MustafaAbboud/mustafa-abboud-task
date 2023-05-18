@@ -12,28 +12,24 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 
+import permissions from '@/config/permissions';
+
 function MainNavigation() {
 
   const { data: session, status } = useSession()
 
-  const loading = status === "loading"
-
   const router = useRouter();
 
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [ability, setAbility] = useState()
 
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log(session)
-    if (session)
-      setIsAdmin(session.user.role === 'admin' ? true : false)
+
+    if (session) {
+      setAbility(permissions(session.user))
+    }
   }, [session])
-
-  useEffect(() => {
-    console.log(loading)
-  }, [loading])
-
 
   function logoutHandler() {
     signOut();
@@ -45,7 +41,7 @@ function MainNavigation() {
       <Toolbar>
         <Box sx={{ flexGrow: 1, display: 'flex' }}>
           <Box sx={{ width: 180, display: 'flex', justifyContent: 'space-between' }}>
-            {session && (
+            {ability && ability.can('read', 'user') && (
               <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
                 <MenuItem selected={pathname == "/" && true}>Public</MenuItem>
               </Link>
@@ -55,7 +51,7 @@ function MainNavigation() {
                 <MenuItem selected={pathname == "/registration" && true}>Log In</MenuItem>
               </Link>
             )}
-            {session && isAdmin && (
+            {ability && ability.can('create', 'user') && (
               <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
                 <MenuItem selected={pathname == "/admin" && true}>Admin</MenuItem>
               </Link>

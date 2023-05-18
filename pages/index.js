@@ -15,7 +15,7 @@ function PublicPage() {
 
   return <UsersTable
     isAdmin={false}
-    accessToken={session.user.accessToken}
+    user={session.user}
   />
 }
 

@@ -41,6 +41,7 @@ export default NextAuth({
                 disconnectFromDB()
 
                 const loggedUser = {
+                    userId: user._id,
                     email: user.email,
                     role: user.role,
                     accessToken: accessToken

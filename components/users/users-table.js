@@ -30,7 +30,8 @@ function UsersTable(props) {
     const [isLoading, setIsLoading] = useState(false)
 
     const isAdmin = props.isAdmin
-    const accessToken = props.accessToken
+    const accessToken = props.user.accessToken
+    const userId = props.user.userId
 
     async function qryUsers() {
 
@@ -135,7 +136,7 @@ function UsersTable(props) {
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.role}</TableCell>
-                                    {isAdmin && (
+                                    {isAdmin && user._id !== userId && (
                                         <TableCell>
                                             <IconButton onClick={() => openUserWindow(user)}>
                                                 <EditIcon />

@@ -15,7 +15,7 @@ function AdminPage() {
 
     return <UsersTable
         isAdmin={true}
-        accessToken={session.user.accessToken}
+        user={session.user}
     />
 }
 

@@ -1,9 +1,9 @@
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@mui/material/styles';
 
-import Layout from '../components/layout/layout';
-
 import theme from '@/styles/theme';
+
+import Layout from '../components/layout/layout';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -13,7 +13,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <Component {...pageProps} />
         </Layout>
       </ThemeProvider>
-
     </SessionProvider>
   );
 }
