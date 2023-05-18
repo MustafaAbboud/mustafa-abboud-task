@@ -73,7 +73,6 @@ function UsersTable(props) {
 
         const data = await response.json();
 
-        console.log(data)
         if (data.error) {
             toast.error(data.error);
         } else {
