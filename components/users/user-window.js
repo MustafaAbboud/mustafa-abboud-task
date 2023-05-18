@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -87,7 +87,7 @@ function UserWindow(props) {
     }
 
     return (
-        <Box sx={{ position: 'absolute', top: 72, width: 'calc(100vw - 25px)', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'hsla(0, 0%, 100%, 0.4)' }}>
+        <Box sx={{ position: 'absolute', top: 72, width: 'calc(100vw - 25px)', height: 'calc(100vh - 72px)', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'hsla(0, 0%, 100%, 0.4)' }}>
             <ToastContainer
                 position="bottom-right"
                 hideProgressBar={true}

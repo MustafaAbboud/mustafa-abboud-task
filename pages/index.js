@@ -14,7 +14,7 @@ function PublicPage() {
     return <Loader />
 
   return <UsersTable
-    isAdmin={true}
+    isAdmin={false}
     accessToken={session.user.accessToken}
   />
 }

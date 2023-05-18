@@ -75,9 +75,8 @@ function SignupForm() {
 
         const data = await response.json();
 
-        if (!response.ok) {
-            toast.error('Something went wrong!');
-            throw new Error(data.message || 'Something went wrong!');
+        if (data.error) {
+            toast.error(data.error);
         }
 
         toast.success('Signup Successful');
@@ -97,7 +96,7 @@ function SignupForm() {
                         <Input id="standard-basic" placeholder="User Name" required inputRef={nameInputRef} />
                     }
 
-                    <Input sx={{ marginTop: '20px' }} id="standard-basic" placeholder="Email" required inputRef={emailInputRef} />
+                    <Input sx={{ marginTop: '20px' }} id="standard-basic" type='email' placeholder="Email" required inputRef={emailInputRef} />
 
                     <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />
 

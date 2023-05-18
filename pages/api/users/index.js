@@ -53,8 +53,7 @@ async function handler(req, res) {
                 })
 
                 if (!updatedUser) {
-                    res.status(422).json({ message: 'User not found!' });
-                    throw new Error('User not found!');
+                    return res.status(422).json({ error: 'User not found!' });
                 }
 
                 res.status(200).json({

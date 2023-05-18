@@ -70,9 +70,10 @@ function UsersTable(props) {
             },
         });
 
-        if (!response.ok) {
-            toast.error('Something went wrong!');
-            throw new Error(data.message || 'Something went wrong!');
+        const data = await response.json();
+
+        if (data.error) {
+            toast.error(data.error);
         }
 
         toast.success('Record deleted successfully');
@@ -85,8 +86,11 @@ function UsersTable(props) {
         if (user) {
             setNewMode(false)
             setUserToEdit(user)
-        } else
+        } else {
+
             setNewMode(true)
+            setUserToEdit(false)
+        }
 
         setUserWindowOpen(true)
     }
