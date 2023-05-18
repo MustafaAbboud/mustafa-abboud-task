@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -20,6 +21,8 @@ function MainNavigation() {
   const router = useRouter();
 
   const [isAdmin, setIsAdmin] = useState(false)
+
+  const pathname = usePathname();
 
   useEffect(() => {
     console.log(session)
@@ -41,21 +44,23 @@ function MainNavigation() {
     <AppBar position="absolute">
       <Toolbar>
         <Box sx={{ flexGrow: 1, display: 'flex' }}>
-          {session && (
-            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
-              <MenuItem>Public</MenuItem>
-            </Link>
-          )}
-          {!session && (
-            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/registration'>
-              <MenuItem>Log In</MenuItem>
-            </Link>
-          )}
-          {session && isAdmin && (
-            <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
-              <MenuItem>Admin</MenuItem>
-            </Link>
-          )}
+          <Box sx={{ width: 180, display: 'flex', justifyContent: 'space-between' }}>
+            {session && (
+              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
+                <MenuItem selected={pathname == "/" && true}>Public</MenuItem>
+              </Link>
+            )}
+            {!session && (
+              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/registration'>
+                <MenuItem selected={pathname == "/registration" && true}>Log In</MenuItem>
+              </Link>
+            )}
+            {session && isAdmin && (
+              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
+                <MenuItem selected={pathname == "/admin" && true}>Admin</MenuItem>
+              </Link>
+            )}
+          </Box>
         </Box>
         {session && (
           <Button color="inherit" onClick={logoutHandler}>Logout</Button>

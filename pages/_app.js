@@ -1,13 +1,19 @@
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from '@mui/material/styles';
 
 import Layout from '../components/layout/layout';
+
+import theme from '@/styles/theme';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ThemeProvider theme={theme}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
+
     </SessionProvider>
   );
 }

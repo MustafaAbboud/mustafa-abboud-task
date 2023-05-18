@@ -1,11 +1,7 @@
 import { connectToDB, disconnectFromDB } from '../../../utils/db';
 import { hashPassword } from '../../../utils/auth';
 import User from '@/models/UsersModel';
-import { getToken } from "next-auth/jwt";
-import jwt from 'jsonwebtoken';
 import authUserMiddleware from '@/middlewares/users.middleware';
-
-const secret = process.env.NEXTAUTH_SECRET
 
 async function handler(req, res) {
 
@@ -116,7 +112,7 @@ async function handler(req, res) {
 
         const { id } = await req.body;
 
-        connectToDB();
+        await connectToDB();
 
         try {
 

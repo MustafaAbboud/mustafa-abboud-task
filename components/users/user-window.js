@@ -82,7 +82,7 @@ function UserWindow(props) {
         else
             toast.success('Record edited successfully');
 
-        props.qryUsers()
+        await props.qryUsers()
         setIsLoading(false)
     }
 
@@ -104,7 +104,7 @@ function UserWindow(props) {
 
                         <Input sx={{ width: '300px' }} id="standard-basic" placeholder="User Name" required defaultValue={name} inputRef={nameInputRef} />
 
-                        <Input sx={{ width: '300px', marginTop: '20px' }} id="standard-basic" placeholder="Email" required defaultValue={email} inputRef={emailInputRef} />
+                        <Input sx={{ width: '300px', marginTop: '20px' }} id="standard-basic" type='email' placeholder="Email" required defaultValue={email} inputRef={emailInputRef} />
 
                         {newMode && (
                             <Input sx={{ marginTop: '20px' }} id="standard-basic" type='password' placeholder="Password" required inputRef={passwordInputRef} />

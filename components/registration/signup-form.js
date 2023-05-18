@@ -55,6 +55,14 @@ function SignupForm() {
 
             try {
                 const result = await createUser(user);
+
+                if (result.error)
+                    toast.error(result.error);
+                else {
+                    toast.success('Signup Successful');
+                    setIsLogin(true)
+                }
+
             } catch (error) {
                 toast.error('Something went wrong!');
             }
@@ -75,11 +83,6 @@ function SignupForm() {
 
         const data = await response.json();
 
-        if (data.error) {
-            toast.error(data.error);
-        }
-
-        toast.success('Signup Successful');
         return data;
     }
 

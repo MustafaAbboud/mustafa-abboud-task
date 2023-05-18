@@ -72,12 +72,14 @@ function UsersTable(props) {
 
         const data = await response.json();
 
+        console.log(data)
         if (data.error) {
             toast.error(data.error);
+        } else {
+            toast.success('Record deleted successfully');
+            await qryUsers()
         }
 
-        toast.success('Record deleted successfully');
-        qryUsers()
         setIsLoading(false)
     }
 
