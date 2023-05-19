@@ -14,6 +14,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import Loader from '@/utils/loader';
 
 //user add-edit window only accessed by admins
+//props need 
+//newMode bool
+//user selected to edit, empty if newMode
+//qryUsers function
+//setUserWindowOpen to close
+//accessToken
 function UserWindow(props) {
 
     const newMode = props.newMode
