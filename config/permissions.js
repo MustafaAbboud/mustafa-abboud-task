@@ -1,16 +1,15 @@
 import { defineAbility } from '@casl/ability';
 
-export default function permissions(user) {
+export default function permissions(user, toolsEnabled) {
     return defineAbility((can) => {
 
         if (user.accessToken) {
             can('read', 'user');
 
-            if (user.role === 'admin') {
-                can('delete', 'user');
-                can('update', 'user');
-                can('create', 'user');
-            }
+            if (toolsEnabled)
+                if (user.role === 'admin') {
+                    can('manage', 'user');
+                }
         }
     });
 }

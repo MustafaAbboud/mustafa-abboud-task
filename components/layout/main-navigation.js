@@ -18,6 +18,8 @@ function MainNavigation() {
 
   const { data: session, status } = useSession()
 
+  const loading = status === "loading"
+
   const router = useRouter();
 
   const [ability, setAbility] = useState()
@@ -27,7 +29,7 @@ function MainNavigation() {
   useEffect(() => {
 
     if (session) {
-      setAbility(permissions(session.user))
+      setAbility(permissions(session.user, true))
     }
   }, [session])
 
@@ -39,28 +41,32 @@ function MainNavigation() {
   return (
     <AppBar position="absolute">
       <Toolbar>
-        <Box sx={{ flexGrow: 1, display: 'flex' }}>
-          <Box sx={{ width: 180, display: 'flex', justifyContent: 'space-between' }}>
-            {ability && ability.can('read', 'user') && (
-              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
-                <MenuItem selected={pathname == "/" && true}>Public</MenuItem>
-              </Link>
+        {!loading &&
+          <>
+            <Box sx={{ flexGrow: 1, display: 'flex' }}>
+              <Box sx={{ width: 180, display: 'flex', justifyContent: 'space-between' }}>
+                {ability && ability.can('read', 'user') && (
+                  <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/'>
+                    <MenuItem selected={pathname == "/" && true}>Public</MenuItem>
+                  </Link>
+                )}
+                {!session && (
+                  <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/registration'>
+                    <MenuItem selected={pathname == "/registration" && true}>Log In</MenuItem>
+                  </Link>
+                )}
+                {ability && ability.can('manage', 'user') && (
+                  <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
+                    <MenuItem selected={pathname == "/admin" && true}>Admin</MenuItem>
+                  </Link>
+                )}
+              </Box>
+            </Box>
+            {session && (
+              <Button color="inherit" onClick={logoutHandler}>Logout</Button>
             )}
-            {!session && (
-              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/registration'>
-                <MenuItem selected={pathname == "/registration" && true}>Log In</MenuItem>
-              </Link>
-            )}
-            {ability && ability.can('create', 'user') && (
-              <Link style={{ textDecoration: 'none', color: '#ffffff' }} href='/admin'>
-                <MenuItem selected={pathname == "/admin" && true}>Admin</MenuItem>
-              </Link>
-            )}
-          </Box>
-        </Box>
-        {session && (
-          <Button color="inherit" onClick={logoutHandler}>Logout</Button>
-        )}
+          </>
+        }
       </Toolbar>
     </AppBar>
   );

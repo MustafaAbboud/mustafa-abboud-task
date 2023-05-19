@@ -29,9 +29,8 @@ function UsersTable(props) {
     const [newMode, setNewMode] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const isAdmin = props.isAdmin
     const accessToken = props.user.accessToken
-    const userId = props.user.userId
+    const ability = props.ability
 
     async function qryUsers() {
 
@@ -118,7 +117,7 @@ function UsersTable(props) {
                                 <TableCell>User Name</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Role</TableCell>
-                                {isAdmin && (
+                                {ability && ability.can('manage', 'user') && (
                                     <TableCell>Tools</TableCell>
                                 )}
                             </TableRow>
@@ -135,7 +134,7 @@ function UsersTable(props) {
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.role}</TableCell>
-                                    {isAdmin && user._id !== userId && (
+                                    {ability && ability.can('manage', 'user') && (
                                         <TableCell>
                                             <IconButton onClick={() => openUserWindow(user)}>
                                                 <EditIcon />
@@ -150,10 +149,11 @@ function UsersTable(props) {
                         </TableBody>
                     </Table>
                 </TableContainer>
-
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '40px' }}>
-                    <Button sx={{ width: '140px' }} type='submit' variant="contained" onClick={() => openUserWindow()}>Add User</Button>
-                </Box>
+                {ability && ability.can('manage', 'user') && (
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '40px' }}>
+                        <Button sx={{ width: '140px' }} type='submit' variant="contained" onClick={() => openUserWindow()}>Add User</Button>
+                    </Box>
+                )}
             </Box>
 
             {userWindowOpen && (
