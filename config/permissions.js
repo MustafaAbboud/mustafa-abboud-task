@@ -1,5 +1,6 @@
 import { defineAbility } from '@casl/ability';
 
+//returns session user permissions
 export default function permissions(user, toolsEnabled) {
     return defineAbility((can) => {
 

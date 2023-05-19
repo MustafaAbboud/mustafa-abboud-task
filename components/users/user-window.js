@@ -13,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import Loader from '@/utils/loader';
 
+//user add-edit window only accessed by admins
 function UserWindow(props) {
 
     const newMode = props.newMode

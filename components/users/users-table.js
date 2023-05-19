@@ -21,6 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UserWindow from './user-window';
 import Loader from '@/utils/loader';
 
+//users table component
+//takes ability prop to check if user has permission to manage data
 function UsersTable(props) {
 
     const [users, setUsers] = useState([{}])

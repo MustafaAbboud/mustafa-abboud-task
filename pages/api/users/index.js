@@ -3,6 +3,7 @@ import { hashPassword } from '../../../utils/auth';
 import User from '@/models/UsersModel';
 import authUserMiddleware from '@/middlewares/users.middleware';
 
+//users GET POST DELETE APIs
 async function handler(req, res) {
 
     if (req.method === 'GET') {

@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 
 import MainNavigation from './main-navigation';
 
+//wraps the app with a navbar
 function Layout(props) {
   return (
     <Fragment>

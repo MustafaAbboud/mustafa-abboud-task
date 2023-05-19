@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
+//wraps the app with custom mui theme
 const theme = createTheme({
 
     components: {

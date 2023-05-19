@@ -5,6 +5,8 @@ const mongodbUser = process.env.mongodb_username
 const mongodbPWD = process.env.mongodb_pwd
 const mongodbCluster = process.env.mongodb_cluster
 
+//utility that manages the connection to the database
+
 export async function connectToDB() {
 
   if (mongoose.connection.readyState === 1)

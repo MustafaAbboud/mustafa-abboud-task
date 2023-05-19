@@ -6,6 +6,8 @@ import { verifyPassword } from '../../../utils/auth';
 import { connectToDB, disconnectFromDB } from '../../../utils/db';
 import User from '@/models/UsersModel';
 
+//authentication session using next-auth v4
+//returns a session containing userId, email, role, accessToken (jwt)
 export default NextAuth({
     session: {
         strategy: 'jwt',

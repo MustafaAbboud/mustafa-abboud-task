@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+//middleware to chech if user is authorized to make an api call or not 
+//using jwt token sent in the request header
 async function authUserMiddleware(req, adminReq) {
 
     try {
